@@ -19,6 +19,44 @@ def handle_start(message):
 def handle_status(message):
     bot.reply_to(message, "✅ Bot läuft stabil über Webhook!")
 
+import requests
+
+@bot.message_handler(commands=['tiktokstats'])
+def handle_tiktokstats(message):
+    try:
+        username = message.text.split(" ")[1]
+    except IndexError:
+        bot.reply_to(message, "❗ Bitte gib einen TikTok-Benutzernamen an. Beispiel:\n`/tiktokstats charlidamelio`", parse_mode="Markdown")
+        return
+
+    bot.reply_to(message, f"🔍 TikTok-Daten für @{username} werden geladen...")
+
+    # ➤ DEINE Webhook-URL von Make hier eintragen (ersetzt durch deinen Link!)
+    make_webhook_url = "https://hook.eu2.make.com/xz17g7fbo2akhtucuhnuw2j1loxa87t5
+"
+
+    try:
+        response = requests.post(make_webhook_url, json={"username": username})
+        data = response.json()
+
+        if "error" in data:
+            bot.reply_to(message, f"❌ Fehler: {data['error']}")
+            return
+
+        stats = (
+            f"📊 TikTok Stats für @{username}\n"
+            f"- 👥 Follower: {data.get('followers', '—')}\n"
+            f"- ❤️ Likes: {data.get('likes', '—')}\n"
+            f"- 🎥 Videos: {data.get('videos', '—')}\n"
+            f"- 📝 Bio: {data.get('bio', '—')}"
+        )
+
+        bot.send_message(message.chat.id, stats)
+
+    except Exception as e:
+        bot.reply_to(message, f"🚫 Fehler bei Anfrage: {str(e)}")
+
+
 # === Webhook-Endpunkt ===
 @app.route("/" + BOT_TOKEN, methods=['POST'])
 def webhook():

@@ -31,29 +31,26 @@ def handle_tiktokstats(message):
 
     bot.reply_to(message, f"🔍 TikTok-Daten für @{username} werden geladen...")
 
-    # Deine Make Webhook-URL
-    make_webhook_url = "https://hook.eu2.make.com/xz17g7fbo2akhtucuhnuw2j1loxa87t5"
-
+    # Direkte Anfrage an die TokAPI
+    url = f"https://tokapi-mobile-version.vercel.app/api/user/{username}"
     try:
-        response = requests.post(make_webhook_url, json={"username": username})
+        response = requests.get(url)
         data = response.json()
 
-        if "error" in data:
-            bot.reply_to(message, f"❌ Fehler: {data['error']}")
-            return
+        user = data.get("userInfo", {})
 
         stats = (
             f"📊 TikTok Stats für @{username}\n"
-            f"- 👥 Follower: {data.get('followers', '—')}\n"
-            f"- ❤️ Likes: {data.get('likes', '—')}\n"
-            f"- 🎥 Videos: {data.get('videos', '—')}\n"
-            f"- 📝 Bio: {data.get('bio', '—')}"
+            f"- 👥 Follower: {user.get('followerCount', '—')}\n"
+            f"- ❤️ Likes: {user.get('heart', '—')}\n"
+            f"- 🎥 Videos: {user.get('video', '—')}\n"
+            f"- 📝 Bio: {user.get('signature', '—')}"
         )
-
         bot.send_message(message.chat.id, stats)
 
     except Exception as e:
-        bot.reply_to(message, f"🚫 Fehler bei Anfrage: {str(e)}")
+        bot.reply_to(message, f"🚫 Fehler bei TikTok-Anfrage: {str(e)}")
+
 
 
 

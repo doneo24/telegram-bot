@@ -12,7 +12,8 @@ app = Flask(__name__)
 def handle_ping(message):
     bot.reply_to(message, "🏓 Pong vom Bot!")
 
-@app.route("/" + BOT_TOKEN, methods=['POST'])
+@app.route("/", methods=['POST'])
+
 def webhook():
     update = telebot.types.Update.de_json(request.get_data().decode("utf-8"))
     bot.process_new_updates([update])
@@ -24,5 +25,6 @@ def index():
 
 if __name__ == "__main__":
     bot.remove_webhook()
-    bot.set_webhook(url=WEBHOOK_URL + BOT_TOKEN)
+    bot.set_webhook(url=WEBHOOK_URL)
+
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

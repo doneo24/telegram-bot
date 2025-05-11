@@ -31,9 +31,8 @@ def handle_tiktokstats(message):
 
     bot.reply_to(message, f"🔍 TikTok-Daten für @{username} werden geladen...")
 
-    # ➤ DEINE Webhook-URL von Make hier eintragen (ersetzt durch deinen Link!)
+    # Deine Make Webhook-URL
     make_webhook_url = "https://hook.eu2.make.com/xz17g7fbo2akhtucuhnuw2j1loxa87t5"
-
 
     try:
         response = requests.post(make_webhook_url, json={"username": username})
@@ -55,6 +54,7 @@ def handle_tiktokstats(message):
 
     except Exception as e:
         bot.reply_to(message, f"🚫 Fehler bei Anfrage: {str(e)}")
+
 
 
 # === Webhook-Endpunkt ===

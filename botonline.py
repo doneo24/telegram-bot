@@ -1,59 +1,38 @@
+# Telegram Bot mit Webhook statt Polling (409-frei)
 import telebot
-import requests
-from bs4 import BeautifulSoup
-import schedule
-import time
 import os
+from flask import Flask, request
 
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
-ADMIN_ID = int(os.environ.get('ADMIN_ID'))
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+ADMIN_ID = os.environ.get("ADMIN_ID")
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL")  # z. B. https://doneo24.onrender.com/
 
 bot = telebot.TeleBot(BOT_TOKEN)
+app = Flask(__name__)
 
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    bot.reply_to(message, "Hi, dein Telegram-Bot ist online!")
-
-def scrape_comments():
-    # Dummy-Funktion oder echte Logik hier einfügen
-    return [{"author": "user123", "comment": "Beispiel-Kommentar"}]
-
-@bot.message_handler(commands=['scrape'])
-def handle_scrape(message):
-    comments = scrape_comments()
-    reply = "\n".join(f"{c['author']}: {c['comment']}" for c in comments)
-    bot.send_message(message.chat.id, reply)
-
-
-
-from datetime import datetime
-start_time = datetime.now()
-def send_daily_report():
-    uptime = datetime.now() - start_time
-    msg = f"🕘 Täglicher Report:\nUptime: {str(uptime).split('.')[0]}\nSicherheit: ✅ Aktiv"
-    bot.send_message(ADMIN_ID, msg)
-
-schedule.every().day.at("09:00").do(send_daily_report)
+# === Telegram-Befehle ===
+@bot.message_handler(commands=['start'])
+def handle_start(message):
+    bot.reply_to(message, "Hi, ich bin dein Doneo24-Bot – jetzt über Webhook online!")
 
 @bot.message_handler(commands=['status'])
-def send_status(message):
-    uptime = datetime.now() - start_time
-    bot.reply_to(message, f"✅ Bot läuft seit {str(uptime).split('.')[0]}.\nAlles stabil.")
+def handle_status(message):
+    bot.reply_to(message, "✅ Bot läuft stabil über Webhook!")
 
-@bot.message_handler(commands=['security'])
-def send_security_status(message):
-    bot.reply_to(message, "🔐 Sicherheit aktiv:\n- CodeQL aktiviert\n- Secret Protection bereit\n- AutoFix aktiv")
+# === Webhook-Endpunkt ===
+@app.route("/" + BOT_TOKEN, methods=['POST'])
+def webhook():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "", 200
 
-@bot.message_handler(commands=['shutdown'])
-def shutdown(message):
-    if str(message.from_user.id) == os.environ.get("ADMIN_ID"):
-        bot.send_message(message.chat.id, "Bot wird gestoppt. Bis bald!")
-        os._exit(0)
-    else:
-        bot.reply_to(message, "⛔ Kein Zugriff.")
+# === Setup Webhook ===
+@app.route("/")
+def index():
+    return "Webhook läuft!", 200
+
 if __name__ == "__main__":
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-        bot.infinity_polling(none_stop=True)
-
+    bot.remove_webhook()
+    bot.set_webhook(url=WEBHOOK_URL + BOT_TOKEN)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

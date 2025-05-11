@@ -4,7 +4,6 @@ services:
     env: python
     startCommand: python botonline.py
     envVars:
-      - key: BOT_TOKEN
-        value: 7504842001:AAFEF1jy82fSMAnd8S7WGtm-jlbgT5UWi2Q
+      
       - key: ADMIN_ID
         value: 7828815493

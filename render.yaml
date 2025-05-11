@@ -4,6 +4,9 @@ services:
     env: python
     startCommand: python botonline.py
     envVars:
-      
+      - key: BOT_TOKEN
+        value: dein_token
       - key: ADMIN_ID
-        value: 7828815493
+        value: deine_admin_id
+      - key: WEBHOOK_URL
+        value: https://telegram-bot-sk55.onrender.com

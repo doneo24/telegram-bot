@@ -48,6 +48,9 @@ def handle_jagd(message):
     if len(parts) == 2:
         category = parts[1].lower()
         bot.send_message(message.chat.id, f"🔍 Starte Jagd in Kategorie: {category}")
+        products = scrape_thieve_by_category(category)
+        ...
+
         try:
             products = scrape_thieve_by_category(category)
             for p in products:

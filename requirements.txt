@@ -1,5 +1,6 @@
 pyTelegramBotAPI
+flask
+openai
 requests
 beautifulsoup4
-schedule
-flask
+gunicorn

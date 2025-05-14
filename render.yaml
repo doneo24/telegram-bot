@@ -2,7 +2,7 @@ services:
   - type: web
     name: telegram-bot
     env: python
-    startCommand: gunicorn botonine:app  # Falls Datei "botonline.py" heißt
+    startCommand: gunicorn botonline:app  # Falls Datei "botonline.py" heißt
     envVars:
       - key: BOT_TOKEN
         value: dein_token

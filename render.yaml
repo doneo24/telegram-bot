@@ -1,4 +1,4 @@
-services: gunicorn
+services: 
   - type: web
     name: telegram-bot
     env: python

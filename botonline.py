@@ -47,10 +47,7 @@ def handle_jagd(message):
     parts = message.text.split()
     if len(parts) == 2:
         category = parts[1].lower()
-        bot.send_message(message.chat.id, f"🔍 Starte Jagd in Kategorie: {category}")
-        products = scrape_thieve_by_category(category)
-        ...
-
+        bot.send_message(message.chat.id, f"🔎 Starte Jagd in Kategorie: {category}")
         try:
             products = scrape_thieve_by_category(category)
             for p in products:
@@ -62,12 +59,13 @@ def handle_jagd(message):
                     f"<a href='{p['link']}'>🔗 Zum Produkt</a>"
                 )
                 markup = types.InlineKeyboardMarkup()
-                markup.add(types.InlineKeyboardButton("📝 Text generieren", callback_data=f"generate_{p['id']}"))
-                bot.send_message(message.chat.id, caption, parse_mode='HTML', reply_markup=markup)
+                markup.add(types.InlineKeyboardButton("✏️ Text generieren", callback_data=f"generate_{p['id']}"))
+                bot.send_message(message.chat.id, caption, parse_mode="HTML", reply_markup=markup)
         except Exception as e:
-            bot.send_message(message.chat.id, f"Fehler beim Scraping: {e}")
+            bot.send_message(message.chat.id, f"⚠️ Fehler: {e}")
     else:
-        bot.send_message(message.chat.id, "Bitte nutze: /jagd [Kategorie] – z. B. /jagd home")
+        bot.send_message(message.chat.id, "❌ Bitte gib eine Kategorie an, z. B. /jagd tools")
+
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("generate_"))
 def callback_generate(call):

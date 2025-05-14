@@ -4,4 +4,3 @@ flask
 openai
 requests
 beautifulsoup4
-gunicorn

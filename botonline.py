@@ -13,7 +13,7 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot("7629574476:AAHaIOesozmymCpy9tJsjFS0pH0CYwP4kpE")
 app = Flask(__name__)
 
 def scrape_thieve_by_category(category):
